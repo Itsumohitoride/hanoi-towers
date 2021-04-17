@@ -1,9 +1,20 @@
 package ui;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class Main {
+
+	public final static int ONE = 0;
+	public final static int TWO = 1;
+	public final static int THREE = 2;
+	public final static int SIZEARRAY = 3;
+	public int positionDisc[] = new int[SIZEARRAY];
+	public final static String FILEINPUT = "data/Hanoi_input.txt";
+	public final static String FILEOURPUT = "data/Hanoi_output.txt";
 
 	public Scanner lector;
 
@@ -20,44 +31,48 @@ public class Main {
 
 	public void initializate() throws IOException {
 
-		int agujaInicial = 0;
-		int agujaFinal = 0;
-		int agujaTemp = 0;
 		int numDisc;
-		int numDiscInt = 0;
-		int totalDisc = 0;
-		int[] allDisc;
+		
+		BufferedReader br = new BufferedReader(new FileReader(FILEINPUT));
+		PrintWriter pw = new PrintWriter(FILEOURPUT);
+		numDisc = Integer.parseInt(br.readLine());
+		
+		for (int i = 0; i < numDisc; i++) {
+			
+			positionDisc[ONE] = Integer.parseInt(br.readLine());
+			positionDisc[TWO] = 0;
+			positionDisc[THREE] = 0;
 
-		numDisc = lector.nextInt();
-
-		allDisc = new int[numDisc];
-
-		for(int i = 0; i<numDiscInt; i++) {
-
-			totalDisc = lector.nextInt();;
-
-			allDisc[i] = totalDisc;
+			pw.println(positionDisc[ONE]+" "+positionDisc[TWO]+ " "+positionDisc[THREE]);
+			
+			towers(pw, positionDisc[ONE], ONE, THREE, TWO);
+			
+			pw.println("");
 		}
-
-		for (int i = 0; i < allDisc.length; i++) {
-			resolverTorres(allDisc[i], agujaInicial, agujaTemp, agujaFinal);
-		}
+	  
+		br.close();
+		pw.close();
 	}
 
-	public static void resolverTorres(int n, int origin, int temp, int end) {
+	public void towers(PrintWriter pw, int n, int origin, int end, int temp) {
 
 		if(n == 1) {
-			System.out.println((origin-origin)+" "+(temp-temp)+" "+n+"\n");
+
+			positionDisc[origin] = positionDisc[origin] - 1;
+			positionDisc[end] = positionDisc[end] + 1;
+
+			pw.println(positionDisc[ONE]+" "+positionDisc[TWO]+ " "+positionDisc[THREE]);
 		}
 		else {
 
-			System.out.println((n)+" "+(end)+" "+(temp)); 
+			towers(pw, n - 1, origin, temp, end);
 
-			resolverTorres(n - 1, origin, end, temp);
+			positionDisc[origin] = positionDisc[origin] - 1;
+			positionDisc[end] = positionDisc[end] + 1;
 
-			System.out.println((n)+" "+(origin)+" "+(end));
+			pw.println(positionDisc[ONE]+" "+positionDisc[TWO]+ " "+positionDisc[THREE]);
 
-			resolverTorres(n - 1, temp, origin, end);
+			towers(pw, n - 1, temp, end, origin);
 		}
 	}
 }
